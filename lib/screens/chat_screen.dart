@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:simple_chat/screens/welcome_screen.dart';
-
+import 'package:intl/intl.dart';
 import '../constants.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -97,9 +97,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () {
                       messageTextControllar.clear();
                       final user2 = FirebaseAuth.instance.currentUser;
+                      DateTime current_date = DateTime.now();
                       _firestore
-                          .collection('messages')
-                          .add({'text': messagetext, 'sender': user2?.email});
+                          .collection('messages').doc('$current_date')
+                          .set({'text': messagetext, 'sender': user2?.email});
                     },
                     child: Text(
                       'Send',
@@ -175,7 +176,7 @@ class MessagesStrame extends StatelessWidget {
             ),
           );
         }
-        final messages = snapshot.data?.docs ;
+        final messages = snapshot.data?.docs.reversed ;
         List<Messagebubble> messagebubbles = [];
         for (var message in messages!) {
           final messagetext = message.get('text');
